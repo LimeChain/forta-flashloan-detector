@@ -11,8 +11,16 @@
     "agent",
     "flashloan"
   ],
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/LimeChain/forta-flashloan-detector.git"
+  },
   "author": "Deyan Dimitrov",
   "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/LimeChain/forta-flashloan-detector/issues"
+  },
+  "homepage": "https://github.com/LimeChain/forta-flashloan-detector#readme",
   "dependencies": {
     "forta-agent": "^0.0.41"
   },
