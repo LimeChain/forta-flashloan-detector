@@ -3,7 +3,7 @@ const { ethers } = require('forta-agent');
 const dydxSoloMarginAddress = '0x1e0447b19bb6ecfdae1e4ae1694b0c3659614e4e';
 const dydxEventSigs = [
   'event LogDeposit(address indexed accountOwner, uint256 accountNumber, uint256 market, ((bool sign, uint256 value) deltaWei, tuple(bool sign, uint128 value) newPar) update, address from)',
-  'event LogWithdraw(address indexed accountOwner, uint256 accountNumber, uint256 market, ((bool sign, uint256 value) deltaWei, tuple(bool sign, uint128 value) newPar) update, address from',
+  'event LogWithdraw(address indexed accountOwner, uint256 accountNumber, uint256 market, ((bool sign, uint256 value) deltaWei, tuple(bool sign, uint128 value) newPar) update, address from)',
 ];
 
 const zero = ethers.constants.Zero;

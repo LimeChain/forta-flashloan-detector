@@ -1,15 +1,10 @@
 const { ethers } = require('forta-agent');
 
-// Only supports flashloans from these markets
-const eulerMarkets = [
-  '0x62e28f054efc24b26a794f5c1249b6349454352c', // WETH
-  '0x84721a3db22eb852233aeae74f9bc8477f8bcc42', // USDC
-  '0x6085bc95f506c326dcbcd7a6dd6c79fbc18d4686', // DAI
-];
+const controllerAddress = '0x27182842E098f60e3D576794A5bFFb0777E025d3';
 
 const eulerEventSigs = [
-  'event RequestBorrow(address indexed account, uint amount)',
-  'event RequestRepay(address indexed account, uint amount)',
+  'event Borrow(address indexed underlying, address indexed account, uint amount)',
+  'event Repay(address indexed underlying, address indexed account, uint amount)',
 ];
 
 const zero = ethers.constants.Zero;
@@ -19,29 +14,26 @@ module.exports = {
     // Euler doesn't support flashloans natively so we have to sum
     // the borrows and the repays in a tx. If they are equal then
     // the transaction probably contains flashloan
-    const events = txEvent.filterLog(eulerEventSigs, eulerMarkets);
+    const events = txEvent.filterLog(eulerEventSigs, controllerAddress);
     if (events.length === 0) return false;
 
-    // Set the amount of borrow/repay for each market to 0
-    const borrowAmounts = {};
-    const repayAmounts = {};
-    eulerMarkets.forEach((market) => {
-      borrowAmounts[market] = zero;
-      repayAmounts[market] = zero;
-    });
+    // Store the balance difference for each market seperately
+    const balanceDiff = {};
 
-    // Add the borrow/repay amount to the correct market
     events.forEach((event) => {
-      if (event.name === 'RequestBorrow') {
-        borrowAmounts[event.address] = borrowAmounts[event.address].add(event.args.amount);
-      } else {
-        repayAmounts[event.address] = repayAmounts[event.address].add(event.args.amount);
-      }
+      const isBorrow = (event.name === 'Borrow');
+      const { underlying, amount } = event.args;
+
+      // Set initial balance difference to 0
+      const tempBalance = balanceDiff[underlying] || zero;
+
+      // Add to the balance when borrowing and subtract on repaying
+      balanceDiff[underlying] = (isBorrow)
+        ? tempBalance.add(amount)
+        : tempBalance.sub(amount);
     });
 
-    // Euler doesn't have a fee for a flashloan so borrow and repay should be equal
-    return eulerMarkets
-      .some((market) => !borrowAmounts[market].eq(zero)
-      && borrowAmounts[market].eq(repayAmounts[market]));
+    // Check if the balance difference for a market is equal to 0
+    return Object.values(balanceDiff).some((diff) => diff.eq(zero));
   },
 };
