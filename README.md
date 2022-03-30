@@ -35,10 +35,20 @@ Specify the protocols you want to support (If you don't specify any protocols th
 const flashloanDetector = new FlashloanDetector(['aave', 'maker']);
 ```
 
+Call the `init` function to fetch dynamically markets for some of the protocols (Currently needed for Iron Bank)
+
+```
+await flashloanDetector.init();
+```
+
 ### Examples
 
 ```
 const flashloanDetector = new FlashloanDetector(['aave', 'maker']);
+
+const initialize = async () => {
+  await flashloanDetector.init();
+};
 
 const handleTransaction = async (txEvent) => {
   const findings = [];

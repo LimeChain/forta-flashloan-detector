@@ -38,15 +38,19 @@ const mockDydxDepositEvent = {
 };
 
 const mockEulerBorrowEvent = {
-  name: 'RequestBorrow',
-  address: '0x62e28f054efc24b26a794f5c1249b6349454352c',
-  args: { amount },
+  name: 'Borrow',
+  args: {
+    amount,
+    underlying: '0xunderlying',
+  },
 };
 
 const mockEulerRepayEvent = {
-  name: 'RequestRepay',
-  address: '0x62e28f054efc24b26a794f5c1249b6349454352c',
-  args: { amount },
+  name: 'Repay',
+  args: {
+    amount,
+    underlying: '0xunderlying',
+  },
 };
 
 // Event information is not important if we mock 'filterLog'

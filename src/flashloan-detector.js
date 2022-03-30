@@ -20,9 +20,12 @@ module.exports = class FlashloanDetector {
       // Store the protocols as an object ("name": true) for easier access
       this.protocols[protocol] = true;
     });
+  }
 
-    // Init protocols
-    if (this.protocols.ironBank) initIronBankMarkets();
+  // Initialize some protocols
+  // The Iron Bank markets are fetched dynamically
+  async init() {
+    if (this.protocols.ironBank) await initIronBankMarkets();
   }
 
   // Returns an array of protocols from which a flashloan was taken
